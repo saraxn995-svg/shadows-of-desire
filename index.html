@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Shadows of Desire</title>
+
+<style>
+body {
+    background:black;
+    color:white;
+    font-family: Arial;
+    text-align:center;
+}
+
+h1 {
+    color: gold;
+    font-size: 40px;
+}
+
+#theme {
+    font-size: 24px;
+    color: hotpink;
+}
+
+#time {
+    font-size: 30px;
+    color: cyan;
+}
+
+#players {
+    margin-top:20px;
+    font-size:18px;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>SHADOWS OF DESIRE</h1>
+
+<div id="theme">Theme: None</div>
+<div id="time">Time: 0:00</div>
+
+<div id="players"></div>
+
+<script>
+function update(data)
+{
+    document.getElementById("theme").innerText = "Theme: " + data.theme;
+    document.getElementById("time").innerText = "Time: " + data.time;
+
+    let html = "<h3>Players</h3>";
+    data.players.forEach(p => {
+        html += "• " + p + "<br>";
+    });
+
+    document.getElementById("players").innerHTML = html;
+}
+</script>
+
+</body>
+</html>
