@@ -13,11 +13,7 @@
             --text-dim: #9ca3af;
             --border: rgba(180, 0, 0, 0.3);
         }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
             color: #fff;
@@ -41,7 +37,6 @@
             font-size: 20px;
             font-weight: bold;
             text-shadow: 0 0 8px rgba(244, 63, 94, 0.5);
-            margin: 0;
         }
         .subtitle {
             color: #ffa;
@@ -66,102 +61,41 @@
             font-size: 9px;
             text-transform: uppercase;
         }
-        .badge-open {
-            background: #dc2626;
-        }
-        .badge-closed {
-            background: #4b5563;
-        }
-        .badge-choosing {
-            background: var(--accent);
-            color: #000;
-            animation: pulse 1s infinite;
-        }
+        .badge-open { background: #dc2626; }
+        .badge-closed { background: #4b5563; }
+        .badge-choosing { background: var(--accent); color: #000; animation: pulse 1s infinite; }
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
-        .content-area {
-            flex: 1;
-            overflow: hidden;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        tr {
-            border-bottom: 1px solid var(--border);
-        }
-        td {
-            padding: 5px 4px;
-            font-size: 11px;
-        }
-        .name-cell {
-            color: #fca5a5;
-            font-weight: bold;
-        }
-        .legacy-cell {
-            color: var(--text-dim);
-            text-align: right;
-            font-style: italic;
-        }
+        .content-area { flex: 1; overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        tr { border-bottom: 1px solid var(--border); }
+        td { padding: 5px 4px; font-size: 11px; }
+        .name-cell { color: #fca5a5; font-weight: bold; }
+        .legacy-cell { color: var(--text-dim); text-align: right; font-style: italic; }
         .winner-box {
-            text-align: center;
-            padding: 20px;
-            border: 2px solid gold;
-            background: rgba(20, 0, 0, 0.9);
-            border-radius: 10px;
-            margin: 15px 0;
+            text-align: center; padding: 20px;
+            border: 2px solid gold; background: rgba(20,0,0,0.9);
+            border-radius: 10px; margin: 15px 0;
             animation: glow 2s infinite;
         }
         @keyframes glow {
-            0%, 100% { box-shadow: 0 0 15px rgba(255,215,0,0.3); }
+            0%,100% { box-shadow: 0 0 15px rgba(255,215,0,0.3); }
             50% { box-shadow: 0 0 30px rgba(255,215,0,0.6); }
         }
-        .winner-label {
-            color: var(--accent);
-            font-size: 13px;
-            font-weight: bold;
-            margin-bottom: 6px;
-        }
-        .winner-name {
-            color: #fff;
-            font-size: 18px;
-            font-weight: bold;
-            margin: 8px 0;
-        }
-        .winner-legacy {
-            color: #aaa;
-            font-size: 11px;
-        }
-        .choosing {
-            text-align: center;
-            padding: 50px 10px;
-        }
-        .choosing h2 {
-            color: var(--primary);
-            font-size: 18px;
-        }
-        .empty {
-            color: #a1a1aa;
-            font-style: italic;
-            text-align: center;
-            margin-top: 50px;
-            line-height: 1.6;
-        }
+        .winner-label { color: var(--accent); font-size: 13px; font-weight: bold; }
+        .winner-name { color: #fff; font-size: 18px; font-weight: bold; margin: 8px 0; }
+        .winner-legacy { color: #aaa; font-size: 11px; }
+        .choosing { text-align: center; padding: 50px 10px; }
+        .choosing h2 { color: var(--primary); font-size: 18px; }
+        .empty { color: #a1a1aa; font-style: italic; text-align: center; margin-top: 50px; }
         .pagination {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 8px;
-            font-size: 10px;
-            color: #fca5a5;
-            background: rgba(0,0,0,0.5);
-            padding: 4px 8px;
-            border-radius: 4px;
+            display: flex; justify-content: space-between; margin-top: 8px;
+            font-size: 10px; color: #fca5a5; background: rgba(0,0,0,0.5);
+            padding: 4px 8px; border-radius: 4px;
         }
-        #main-area {
-            min-height: 200px;
-        }
+        #main-area { min-height: 200px; }
     </style>
 </head>
 <body>
@@ -178,13 +112,13 @@
 
     <script>
         (function() {
-            // Leer parámetros de la URL
             const urlParams = new URLSearchParams(window.location.search);
             function g(name, fallback) { return urlParams.get(name) || fallback || ''; }
 
             const estado = g('estado', 'CERRADO');
             const tema = g('tema', 'Sin tema');
-            const tiempo = g('tiempo', '--:--');
+            // Segundos restantes (nuevo parámetro)
+            let segundosRestantes = parseInt(g('tseg', '0')) || 0;
             const ganador = g('ganador');
             const legacy = g('legacy');
             const total = parseInt(g('total', '0')) || 0;
@@ -192,9 +126,28 @@
             const maxPag = g('maxpag', '1');
             const numMostrados = parseInt(g('num', '0')) || 0;
 
-            // Llenar cabecera
+            // Mostrar cabecera
             document.getElementById('tema-display').textContent = 'TEMA: ' + tema;
-            document.getElementById('tiempo-display').textContent = tiempo;
+
+            // Función para formatear tiempo mm:ss
+            function formatTime(secs) {
+                if (secs <= 0) return 'Tiempo Acabado';
+                const min = Math.floor(secs / 60);
+                const seg = secs % 60;
+                return min + ':' + (seg < 10 ? '0' : '') + seg + ' rest';
+            }
+
+            // Actualizar el display del tiempo
+            function updateTimerDisplay() {
+                if (estado === 'ABIERTO' && segundosRestantes > 0) {
+                    document.getElementById('tiempo-display').textContent = formatTime(segundosRestantes);
+                } else if (estado === 'ABIERTO' && segundosRestantes <= 0) {
+                    document.getElementById('tiempo-display').textContent = 'Tiempo Acabado';
+                } else {
+                    document.getElementById('tiempo-display').textContent = 'CERRADO';
+                }
+            }
+            updateTimerDisplay();
 
             // Badge de estado
             const badge = document.getElementById('badge-container');
@@ -206,31 +159,23 @@
                 badge.innerHTML = '<span class="badge badge-closed">CERRADO</span>';
             }
 
+            // Contenido principal
             const main = document.getElementById('main-area');
             let html = '';
-
-            // Caso GANADOR
             if (estado === 'GANADOR' && ganador) {
                 html = `<div class="winner-box">
                     <div class="winner-label">🏆 GANADOR/A 🏆</div>
                     <div class="winner-name">${ganador}</div>
                     <div class="winner-legacy">@${legacy || '---'}</div>
                 </div>`;
-            }
-            // Caso ELIGIENDO
-            else if (estado === 'ELIGIENDO') {
+            } else if (estado === 'ELIGIENDO') {
                 html = `<div class="choosing">
                     <h2>🎲 Eligiendo ganador...</h2>
                     <p style="color:#fda4af;font-style:italic;">choosing winner</p>
                 </div>`;
-            }
-            // Caso normal (ABIERTO o CERRADO) - mostrar lista
-            else {
+            } else {
                 if (total === 0) {
-                    html = `<div class="empty">
-                        <p>No hay concursantes apuntados aún.</p>
-                        <p>Be the first to join!</p>
-                    </div>`;
+                    html = `<div class="empty"><p>No hay concursantes apuntados aún.</p><p>Be the first to join!</p></div>`;
                 } else {
                     html = '<table>';
                     for (let i = 0; i < numMostrados; i++) {
@@ -249,11 +194,20 @@
             main.innerHTML = html;
 
             // Paginación
-            const pagBar = document.getElementById('pagination-bar');
-            if (total > 0) {
-                pagBar.innerHTML = `<span>Pág. ${pagina}/${maxPag} (${total})</span><span>Usa botones físicos</span>`;
-            } else {
-                pagBar.innerHTML = `<span>Sin concursantes</span>`;
+            document.getElementById('pagination-bar').innerHTML = total > 0 
+                ? `<span>Pág. ${pagina}/${maxPag} (${total})</span><span>Usa botones físicos</span>`
+                : `<span>Sin concursantes</span>`;
+
+            // Temporizador interno (solo si está ABIERTO y hay tiempo)
+            if (estado === 'ABIERTO' && segundosRestantes > 0) {
+                setInterval(function() {
+                    segundosRestantes--;
+                    if (segundosRestantes <= 0) {
+                        segundosRestantes = 0;
+                        // Se podría forzar un refresco para cerrar, pero mejor dejarlo en 0
+                    }
+                    updateTimerDisplay();
+                }, 1000);
             }
         })();
     </script>
