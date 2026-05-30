@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Shadows of Desire Contest</title>
+    <!-- Fuente temática Cinzel -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-start: #110202;
@@ -17,53 +19,56 @@
         body {
             background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
             color: #fff;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Cinzel', 'Georgia', serif;
             padding: 12px;
             width: 100%;
             height: 100%;
             overflow: hidden;
-            font-size: 13px; /* aumentado base */
+            font-size: 13px;
             display: flex;
             flex-direction: column;
         }
         .header {
             border-bottom: 2px solid #800;
-            padding-bottom: 6px;
-            margin-bottom: 10px;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
             text-align: center;
         }
         .title {
             color: var(--primary);
-            font-size: 32px; /* mucho más grande */
-            font-weight: bold;
-            text-shadow: 0 0 10px rgba(244, 63, 94, 0.7);
+            font-size: 32px;
+            font-weight: 700;
+            text-shadow: 0 0 12px rgba(244, 63, 94, 0.5);
+            margin: 0 0 4px 0;
+            letter-spacing: 2px;
         }
         .subtitle {
             color: #ffa;
-            font-size: 12px; /* un poco más grande */
+            font-size: 14px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
             margin-top: 4px;
+            font-weight: 400;
         }
         .info-bar {
             background: rgba(0, 0, 0, 0.7);
-            padding: 8px 10px; /* ligeramente mayor */
+            padding: 8px 10px;
             border-radius: 6px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
-            font-size: 12px; /* aumentado */
+            font-size: 13px;
         }
         .badge {
             padding: 3px 10px;
             border-radius: 4px;
             font-weight: bold;
-            font-size: 10px; /* un poco más grande */
+            font-size: 11px;
             text-transform: uppercase;
         }
-        .badge-open { background: #16a34a; }
-        .badge-closed { background: #dc2626; }
+        .badge-open { background: #16a34a; }   /* Verde */
+        .badge-closed { background: #dc2626; } /* Rojo */
         .badge-choosing { background: var(--accent); color: #000; animation: pulse 1s infinite; }
         @keyframes pulse {
             0%,100% { opacity: 1; }
@@ -72,7 +77,7 @@
         .content-area { flex: 1; overflow: hidden; }
         table { width: 100%; border-collapse: collapse; }
         tr { border-bottom: 1px solid var(--border); }
-        td { padding: 6px 5px; font-size: 12px; } /* aumentado */
+        td { padding: 5px 4px; font-size: 13px; }
         .name-cell { color: #fca5a5; font-weight: bold; }
         .legacy-cell { color: var(--text-dim); text-align: right; font-style: italic; }
         .winner-box {
@@ -85,16 +90,43 @@
             0%,100% { box-shadow: 0 0 15px rgba(255,215,0,0.3); }
             50% { box-shadow: 0 0 30px rgba(255,215,0,0.6); }
         }
-        .winner-label { color: var(--accent); font-size: 14px; font-weight: bold; margin-bottom: 6px; }
+        .winner-label { color: var(--accent); font-size: 15px; font-weight: bold; margin-bottom: 6px; }
         .winner-name { color: #fff; font-size: 20px; font-weight: bold; margin: 8px 0; }
         .winner-legacy { color: #aaa; font-size: 12px; }
         .choosing { text-align: center; padding: 50px 10px; }
         .choosing h2 { color: var(--primary); font-size: 20px; }
-        .empty { color: #a1a1aa; font-style: italic; text-align: center; margin-top: 50px; font-size: 12px; line-height: 1.6; }
+        .empty { color: #a1a1aa; font-style: italic; text-align: center; margin-top: 50px; line-height: 1.6; font-size: 13px; }
         .pagination {
             display: flex; justify-content: space-between; margin-top: 8px;
-            font-size: 10px; color: #fca5a5; background: rgba(0,0,0,0.5);
+            font-size: 11px; color: #fca5a5; background: rgba(0,0,0,0.5);
             padding: 4px 8px; border-radius: 4px;
+        }
+        .history {
+            margin-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            padding-top: 8px;
+        }
+        .history-title {
+            font-size: 12px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .history-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .history-item {
+            background: rgba(0,0,0,0.5);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            color: #ddd;
         }
         #main-area { min-height: 200px; }
     </style>
@@ -102,14 +134,15 @@
 <body>
     <div class="header">
         <div class="title">Shadows of Desire Contest</div>
-        <div class="subtitle" id="topic-display">TOPIC: ...</div>
+        <div class="subtitle" id="topic-display">📋 TOPIC: ...</div>
     </div>
     <div class="info-bar">
-        <div>Time: <span style="color:#f88;font-weight:bold;" id="time-display">--:--</span></div>
+        <div>⏱️ Time: <span style="color:#f88;font-weight:bold;" id="time-display">--:--</span></div>
         <div id="badge-container"></div>
     </div>
     <div class="content-area" id="main-area"></div>
     <div class="pagination" id="pagination-bar"></div>
+    <div class="history" id="history-section"></div>
 
     <script>
         (function() {
@@ -125,8 +158,9 @@
             const pagina = g('pag', '1');
             const maxPag = g('maxpag', '1');
             const numMostrados = parseInt(g('num', '0')) || 0;
+            const hwcount = parseInt(g('hwcount', '0')) || 0;
 
-            document.getElementById('topic-display').textContent = 'TOPIC: ' + tema;
+            document.getElementById('topic-display').innerHTML = '📋 TOPIC: ' + tema;
 
             function formatTime(secs) {
                 if (secs <= 0) return 'Time ended';
@@ -136,12 +170,13 @@
             }
 
             function updateTimeDisplay() {
+                const timeEl = document.getElementById('time-display');
                 if (estado === 'OPEN' && segundosRestantes > 0) {
-                    document.getElementById('time-display').textContent = formatTime(segundosRestantes);
+                    timeEl.textContent = formatTime(segundosRestantes);
                 } else if (estado === 'OPEN' && segundosRestantes <= 0) {
-                    document.getElementById('time-display').textContent = 'Time ended';
+                    timeEl.textContent = 'Time ended';
                 } else {
-                    document.getElementById('time-display').textContent = 'CLOSED';
+                    timeEl.textContent = 'CLOSED';
                 }
             }
             updateTimeDisplay();
@@ -190,6 +225,20 @@
             document.getElementById('pagination-bar').innerHTML = total > 0
                 ? `<span>Page ${pagina}/${maxPag} (${total})</span><span>Use physical buttons</span>`
                 : `<span>No contestants</span>`;
+
+            // Historial de ganadores
+            const historyDiv = document.getElementById('history-section');
+            if (hwcount > 0) {
+                let histHtml = '<div class="history-title">🏅 Recent Winners / Ganadores Recientes</div><div class="history-list">';
+                for (let i = 0; i < hwcount; i++) {
+                    const name = g('hw' + i);
+                    if (name) histHtml += `<span class="history-item">${name}</span>`;
+                }
+                histHtml += '</div>';
+                historyDiv.innerHTML = histHtml;
+            } else {
+                historyDiv.innerHTML = '';
+            }
 
             if (estado === 'OPEN' && segundosRestantes > 0) {
                 setInterval(function() {
