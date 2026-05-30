@@ -1,63 +1,261 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Shadows of Desire</title>
-
-<style>
-body {
-    background:black;
-    color:white;
-    font-family: Arial;
-    text-align:center;
-}
-
-h1 {
-    color: gold;
-    font-size: 40px;
-}
-
-#theme {
-    font-size: 24px;
-    color: hotpink;
-}
-
-#time {
-    font-size: 30px;
-    color: cyan;
-}
-
-#players {
-    margin-top:20px;
-    font-size:18px;
-}
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Shadows of Desire</title>
+    <style>
+        :root {
+            --bg-start: #110202;
+            --bg-end: #2c0202;
+            --primary: #f43f5e;
+            --accent: #eab308;
+            --text-dim: #9ca3af;
+            --border: rgba(180, 0, 0, 0.3);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            padding: 12px;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-size: 11px;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            border-bottom: 2px solid #800;
+            padding-bottom: 6px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .title {
+            color: var(--primary);
+            font-size: 20px;
+            font-weight: bold;
+            text-shadow: 0 0 8px rgba(244, 63, 94, 0.5);
+            margin: 0;
+        }
+        .subtitle {
+            color: #ffa;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 2px;
+        }
+        .info-bar {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 6px 8px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .badge {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 9px;
+            text-transform: uppercase;
+        }
+        .badge-open {
+            background: #dc2626;
+        }
+        .badge-closed {
+            background: #4b5563;
+        }
+        .badge-choosing {
+            background: var(--accent);
+            color: #000;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .content-area {
+            flex: 1;
+            overflow: hidden;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        tr {
+            border-bottom: 1px solid var(--border);
+        }
+        td {
+            padding: 5px 4px;
+            font-size: 11px;
+        }
+        .name-cell {
+            color: #fca5a5;
+            font-weight: bold;
+        }
+        .legacy-cell {
+            color: var(--text-dim);
+            text-align: right;
+            font-style: italic;
+        }
+        .winner-box {
+            text-align: center;
+            padding: 20px;
+            border: 2px solid gold;
+            background: rgba(20, 0, 0, 0.9);
+            border-radius: 10px;
+            margin: 15px 0;
+            animation: glow 2s infinite;
+        }
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 15px rgba(255,215,0,0.3); }
+            50% { box-shadow: 0 0 30px rgba(255,215,0,0.6); }
+        }
+        .winner-label {
+            color: var(--accent);
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .winner-name {
+            color: #fff;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 8px 0;
+        }
+        .winner-legacy {
+            color: #aaa;
+            font-size: 11px;
+        }
+        .choosing {
+            text-align: center;
+            padding: 50px 10px;
+        }
+        .choosing h2 {
+            color: var(--primary);
+            font-size: 18px;
+        }
+        .empty {
+            color: #a1a1aa;
+            font-style: italic;
+            text-align: center;
+            margin-top: 50px;
+            line-height: 1.6;
+        }
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 10px;
+            color: #fca5a5;
+            background: rgba(0,0,0,0.5);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        #main-area {
+            min-height: 200px;
+        }
+    </style>
 </head>
-
 <body>
+    <div class="header">
+        <div class="title">Shadows of Desire</div>
+        <div class="subtitle" id="tema-display">TEMA: ...</div>
+    </div>
+    <div class="info-bar">
+        <div>Tiempo: <span style="color:#f88;font-weight:bold;" id="tiempo-display">--:--</span></div>
+        <div id="badge-container"></div>
+    </div>
+    <div class="content-area" id="main-area"></div>
+    <div class="pagination" id="pagination-bar"></div>
 
-<h1>SHADOWS OF DESIRE</h1>
+    <script>
+        (function() {
+            // Leer parámetros de la URL
+            const urlParams = new URLSearchParams(window.location.search);
+            function g(name, fallback) { return urlParams.get(name) || fallback || ''; }
 
-<div id="theme">Theme: None</div>
-<div id="time">Time: 0:00</div>
+            const estado = g('estado', 'CERRADO');
+            const tema = g('tema', 'Sin tema');
+            const tiempo = g('tiempo', '--:--');
+            const ganador = g('ganador');
+            const legacy = g('legacy');
+            const total = parseInt(g('total', '0')) || 0;
+            const pagina = g('pag', '1');
+            const maxPag = g('maxpag', '1');
+            const numMostrados = parseInt(g('num', '0')) || 0;
 
-<div id="players"></div>
+            // Llenar cabecera
+            document.getElementById('tema-display').textContent = 'TEMA: ' + tema;
+            document.getElementById('tiempo-display').textContent = tiempo;
 
-<script>
-function update(data)
-{
-    document.getElementById("theme").innerText = "Theme: " + data.theme;
-    document.getElementById("time").innerText = "Time: " + data.time;
+            // Badge de estado
+            const badge = document.getElementById('badge-container');
+            if (estado === 'ABIERTO') {
+                badge.innerHTML = '<span class="badge badge-open">ABIERTO</span>';
+            } else if (estado === 'ELIGIENDO') {
+                badge.innerHTML = '<span class="badge badge-choosing">ELIGIENDO</span>';
+            } else {
+                badge.innerHTML = '<span class="badge badge-closed">CERRADO</span>';
+            }
 
-    let html = "<h3>Players</h3>";
-    data.players.forEach(p => {
-        html += "• " + p + "<br>";
-    });
+            const main = document.getElementById('main-area');
+            let html = '';
 
-    document.getElementById("players").innerHTML = html;
-}
-</script>
+            // Caso GANADOR
+            if (estado === 'GANADOR' && ganador) {
+                html = `<div class="winner-box">
+                    <div class="winner-label">🏆 GANADOR/A 🏆</div>
+                    <div class="winner-name">${ganador}</div>
+                    <div class="winner-legacy">@${legacy || '---'}</div>
+                </div>`;
+            }
+            // Caso ELIGIENDO
+            else if (estado === 'ELIGIENDO') {
+                html = `<div class="choosing">
+                    <h2>🎲 Eligiendo ganador...</h2>
+                    <p style="color:#fda4af;font-style:italic;">choosing winner</p>
+                </div>`;
+            }
+            // Caso normal (ABIERTO o CERRADO) - mostrar lista
+            else {
+                if (total === 0) {
+                    html = `<div class="empty">
+                        <p>No hay concursantes apuntados aún.</p>
+                        <p>Be the first to join!</p>
+                    </div>`;
+                } else {
+                    html = '<table>';
+                    for (let i = 0; i < numMostrados; i++) {
+                        const nombre = g('c' + i);
+                        const leg = g('l' + i);
+                        if (nombre) {
+                            html += `<tr>
+                                <td class="name-cell">${i+1}. ${nombre}</td>
+                                <td class="legacy-cell">@${leg || nombre}</td>
+                            </tr>`;
+                        }
+                    }
+                    html += '</table>';
+                }
+            }
+            main.innerHTML = html;
 
+            // Paginación
+            const pagBar = document.getElementById('pagination-bar');
+            if (total > 0) {
+                pagBar.innerHTML = `<span>Pág. ${pagina}/${maxPag} (${total})</span><span>Usa botones físicos</span>`;
+            } else {
+                pagBar.innerHTML = `<span>Sin concursantes</span>`;
+            }
+        })();
+    </script>
 </body>
 </html>
