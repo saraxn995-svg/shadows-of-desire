@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -84,12 +84,12 @@
             0%,100% { box-shadow: 0 0 15px rgba(255,215,0,0.3); }
             50% { box-shadow: 0 0 30px rgba(255,215,0,0.6); }
         }
-        .winner-label { color: var(--accent); font-size: 13px; font-weight: bold; }
+        .winner-label { color: var(--accent); font-size: 13px; font-weight: bold; margin-bottom: 6px; }
         .winner-name { color: #fff; font-size: 18px; font-weight: bold; margin: 8px 0; }
         .winner-legacy { color: #aaa; font-size: 11px; }
         .choosing { text-align: center; padding: 50px 10px; }
         .choosing h2 { color: var(--primary); font-size: 18px; }
-        .empty { color: #a1a1aa; font-style: italic; text-align: center; margin-top: 50px; }
+        .empty { color: #a1a1aa; font-style: italic; text-align: center; margin-top: 50px; line-height: 1.6; }
         .pagination {
             display: flex; justify-content: space-between; margin-top: 8px;
             font-size: 10px; color: #fca5a5; background: rgba(0,0,0,0.5);
@@ -101,10 +101,10 @@
 <body>
     <div class="header">
         <div class="title">Shadows of Desire</div>
-        <div class="subtitle" id="tema-display">TEMA: ...</div>
+        <div class="subtitle" id="topic-display">TOPIC: ...</div>
     </div>
     <div class="info-bar">
-        <div>Tiempo: <span style="color:#f88;font-weight:bold;" id="tiempo-display">--:--</span></div>
+        <div>Time: <span style="color:#f88;font-weight:bold;" id="time-display">--:--</span></div>
         <div id="badge-container"></div>
     </div>
     <div class="content-area" id="main-area"></div>
@@ -115,8 +115,8 @@
             const urlParams = new URLSearchParams(window.location.search);
             function g(name, fallback) { return urlParams.get(name) || fallback || ''; }
 
-            const estado = g('estado', 'CERRADO');
-            const tema = g('tema', 'Sin tema');
+            const estado = g('estado', 'CLOSED');
+            const tema = g('tema', 'No topic');
             let segundosRestantes = parseInt(g('tseg', '0')) || 0;
             const ganador = g('ganador');
             const legacy = g('legacy');
@@ -125,51 +125,50 @@
             const maxPag = g('maxpag', '1');
             const numMostrados = parseInt(g('num', '0')) || 0;
 
-            document.getElementById('tema-display').textContent = 'TEMA: ' + tema;
+            document.getElementById('topic-display').textContent = 'TOPIC: ' + tema;
 
             function formatTime(secs) {
-                if (secs <= 0) return 'Tiempo Acabado';
+                if (secs <= 0) return 'Time ended';
                 const min = Math.floor(secs / 60);
                 const seg = secs % 60;
-                return min + ':' + (seg < 10 ? '0' : '') + seg + ' rest';
+                return min + ':' + (seg < 10 ? '0' : '') + seg + ' left';
             }
 
-            function updateTimerDisplay() {
-                if (estado === 'ABIERTO' && segundosRestantes > 0) {
-                    document.getElementById('tiempo-display').textContent = formatTime(segundosRestantes);
-                } else if (estado === 'ABIERTO' && segundosRestantes <= 0) {
-                    document.getElementById('tiempo-display').textContent = 'Tiempo Acabado';
+            function updateTimeDisplay() {
+                if (estado === 'OPEN' && segundosRestantes > 0) {
+                    document.getElementById('time-display').textContent = formatTime(segundosRestantes);
+                } else if (estado === 'OPEN' && segundosRestantes <= 0) {
+                    document.getElementById('time-display').textContent = 'Time ended';
                 } else {
-                    document.getElementById('tiempo-display').textContent = 'CERRADO';
+                    document.getElementById('time-display').textContent = 'CLOSED';
                 }
             }
-            updateTimerDisplay();
+            updateTimeDisplay();
 
             const badge = document.getElementById('badge-container');
-            if (estado === 'ABIERTO') {
-                badge.innerHTML = '<span class="badge badge-open">ABIERTO</span>';
-            } else if (estado === 'ELIGIENDO') {
-                badge.innerHTML = '<span class="badge badge-choosing">ELIGIENDO</span>';
-            } else {
-                badge.innerHTML = '<span class="badge badge-closed">CERRADO</span>';
-            }
+            if (estado === 'OPEN') badge.innerHTML = '<span class="badge badge-open">OPEN</span>';
+            else if (estado === 'CHOOSING') badge.innerHTML = '<span class="badge badge-choosing">CHOOSING</span>';
+            else badge.innerHTML = '<span class="badge badge-closed">CLOSED</span>';
 
             const main = document.getElementById('main-area');
             let html = '';
-            if (estado === 'GANADOR' && ganador) {
+            if (estado === 'WINNER' && ganador) {
                 html = `<div class="winner-box">
-                    <div class="winner-label">🏆 GANADOR/A 🏆</div>
+                    <div class="winner-label">🏆 GANADOR/A - WINNER 🏆</div>
                     <div class="winner-name">${ganador}</div>
                     <div class="winner-legacy">@${legacy || '---'}</div>
                 </div>`;
-            } else if (estado === 'ELIGIENDO') {
+            } else if (estado === 'CHOOSING') {
                 html = `<div class="choosing">
-                    <h2>🎲 Eligiendo ganador...</h2>
+                    <h2>🎲 Eligiendo ganador... / Choosing winner...</h2>
                     <p style="color:#fda4af;font-style:italic;">choosing winner</p>
                 </div>`;
             } else {
                 if (total === 0) {
-                    html = `<div class="empty"><p>No hay concursantes apuntados aún.</p><p>Be the first to join!</p></div>`;
+                    html = `<div class="empty">
+                        <p>No hay concursantes aún. / No contestants yet.</p>
+                        <p>¡Sé el primero! / Be the first!</p>
+                    </div>`;
                 } else {
                     html = '<table>';
                     for (let i = 0; i < numMostrados; i++) {
@@ -188,15 +187,14 @@
             main.innerHTML = html;
 
             document.getElementById('pagination-bar').innerHTML = total > 0
-                ? `<span>Pág. ${pagina}/${maxPag} (${total})</span><span>Usa botones físicos</span>`
-                : `<span>Sin concursantes</span>`;
+                ? `<span>Page ${pagina}/${maxPag} (${total})</span><span>Use physical buttons</span>`
+                : `<span>No contestants</span>`;
 
-            // Contador interno (solo si ABIERTO y hay tiempo)
-            if (estado === 'ABIERTO' && segundosRestantes > 0) {
+            if (estado === 'OPEN' && segundosRestantes > 0) {
                 setInterval(function() {
                     segundosRestantes--;
                     if (segundosRestantes <= 0) segundosRestantes = 0;
-                    updateTimerDisplay();
+                    updateTimeDisplay();
                 }, 1000);
             }
         })();
