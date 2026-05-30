@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Shadows of Desire Contest</title>
-    <!-- Fuente temática Cinzel -->
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -67,8 +66,8 @@
             font-size: 11px;
             text-transform: uppercase;
         }
-        .badge-open { background: #16a34a; }   /* Verde */
-        .badge-closed { background: #dc2626; } /* Rojo */
+        .badge-open { background: #16a34a; }
+        .badge-closed { background: #dc2626; }
         .badge-choosing { background: var(--accent); color: #000; animation: pulse 1s infinite; }
         @keyframes pulse {
             0%,100% { opacity: 1; }
@@ -94,7 +93,8 @@
         .winner-name { color: #fff; font-size: 20px; font-weight: bold; margin: 8px 0; }
         .winner-legacy { color: #aaa; font-size: 12px; }
         .choosing { text-align: center; padding: 50px 10px; }
-        .choosing h2 { color: var(--primary); font-size: 20px; }
+        .choosing h2 { color: var(--accent); font-size: 22px; } /* Cambiado a dorado */
+        .choosing p { color: #fef9c3; font-style: italic; font-size: 14px; } /* dorado claro */
         .empty { color: #a1a1aa; font-style: italic; text-align: center; margin-top: 50px; line-height: 1.6; font-size: 13px; }
         .pagination {
             display: flex; justify-content: space-between; margin-top: 8px;
@@ -197,7 +197,7 @@
             } else if (estado === 'CHOOSING') {
                 html = `<div class="choosing">
                     <h2>🎲 Eligiendo ganador... / Choosing winner...</h2>
-                    <p style="color:#fda4af;font-style:italic;">choosing winner</p>
+                    <p>choosing winner</p>
                 </div>`;
             } else {
                 if (total === 0) {
@@ -226,7 +226,6 @@
                 ? `<span>Page ${pagina}/${maxPag} (${total})</span><span>Use physical buttons</span>`
                 : `<span>No contestants</span>`;
 
-            // Historial de ganadores
             const historyDiv = document.getElementById('history-section');
             if (hwcount > 0) {
                 let histHtml = '<div class="history-title">🏅 Recent Winners / Ganadores Recientes</div><div class="history-list">';
